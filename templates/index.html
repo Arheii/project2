@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    rooms
+{% endblock %}
+
+{% block body %}
+  <p>Hello, {{ session.get('username', None) }}</p>
+  <div class="scrollbar scrollbar-primary">
+    <div class="force-overflow">wwrw
+    wer
+    wer
+    wer
+    wer</div>
+  </div>
+  <div class='container'>
+    <h5>rooms</h5>
+    <div class="list-group">
+    {% for chanel in chanels %}
+      <a href="/{{ chanel }}" class="list-group-item list-group-item-action">
+        {{ chanel }}
+        <span class="badge badge-primary badge-pill">14</span>
+      </a>
+    {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}
