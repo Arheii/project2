@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ room }}
+{% endblock %}
+
+{% block body %}
+  <p>Hello, {{ session.get('username', None) }}</p>
+  <!--<div class='container'>-->
+
+  <br><br><br>
+  <div class="container-fluid">
+    <div class="row justify-content-md-center">
+      <div class="col-lg-10 col-md-11 col-sm-12- border m-1">
+
+        <div class="row justify-content-md  bg-info">
+          <h5 class="text-center">It's {{ room }} </h5>
+          <button type="button" class="close" aria-label="Close">
+            <span  aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="row align-items">
+
+          <!--main chat-->
+          <div class="col-12 col-md-10 border p-2"  style="min-height: 30rem;">
+            <p>firt</p>
+            <p>second</p>
+            <ul class="list-group">
+              <!--<li class="list-group-item p-2 bg-light"><b>Total {{ users|length }} users</b></li>-->
+              {% for msg in msgs %}
+                <!--<button type="button" class="list-group-item list-group-item-action">-->
+                <!--  {{ user }}-->
+                <!--</button>-->
+                <li class="list-group-item p-0 m-0">
+                  {{ msg }}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <!--user list-->
+          <div class="col-12 col-md-2 border bg-light  text-truncate">
+            <ul class="list-group list-group-flush ">
+              <li class="list-group-item p-2 bg-light"><b>Total {{ users|length }} users</b></li>
+              {% for user in users %}
+                <!--<button type="button" class="list-group-item list-group-item-action">-->
+                <!--  {{ user }}-->
+                <!--</button>-->
+                <li class="list-group-item p-0 m-0  bg-light">
+                  {{ user }}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="input-group mt-1">
+              <div class="input-group-prepend">
+                <select class="custom-select" id="inputGroupSelect01">
+                  <option selected value="All">All</option>
+                  <option value="alfa">alfa</option>
+                </select>
+              </div>
+
+            <input type="text"  class="form-control" placeholder="mesage" id="text_msg">
+            <div class="input-group-append">
+              <button class="btn btn-outline bg-info" type="button" id="send_msg">Send message</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -1,28 +1,32 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    rooms
+    Chat rooms (project2)
 {% endblock %}
 
 {% block body %}
   <p>Hello, {{ session.get('username', None) }}</p>
-  <div class="scrollbar scrollbar-primary">
-    <div class="force-overflow">wwrw
-    wer
-    wer
-    wer
-    wer</div>
-  </div>
-  <div class='container'>
-    <h5>rooms</h5>
-    <div class="list-group">
-    {% for chanel in chanels %}
-      <a href="/{{ chanel }}" class="list-group-item list-group-item-action">
-        {{ chanel }}
-        <span class="badge badge-primary badge-pill">14</span>
-      </a>
-    {% endfor %}
+  <!--<div class='container'>-->
+  <div class="row justify-content-center">
+    <!--<div class="col-lg-8 col-md-10">-->
+    <div class="col-md-3 col-sm-10">
+      <h5 class="text-center">Choose a chat room</h5>
+      <div class="list-group">
+      {% for room, users in channels.items() %}
+        <a href="rooms/{{ room }}" class="list-group-item list-group-item-action">
+          {{ room }}
+          <span class="badge badge-primary badge-pill">{{ users[0]|length }}</span>
+        </a>
+      {% else %}
+        No any rooms, you will be the first.
+      {% endfor %}
+      </div>
+    </div>
+    <!--<div class="col-md-1 col-sm-10">-->
+    <!--</div>-->
+    <div class="col-md-3 col-sm-10 text-center">
+      <h5>or create a new one</h5>
+      <a class="btn btn-outline-primary btn-lg" href="#" role="button">Add a room</a>
     </div>
   </div>
-
 {% endblock %}
