@@ -4,6 +4,11 @@
     {{ room }}
 {% endblock %}
 
+{% block static %}
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+{% endblock %}
+
+
 {% block body %}
   <p>Hello, {{ session.get('username', None) }}</p>
   <!--<div class='container'>-->
@@ -38,8 +43,8 @@
           <!--user list-->
           <div class="col-0 col-md-2 border bg-light  text-truncate d-lg-block">
             <ul class="list-group list-group-flush ">
-              <li class="list-group-item p-2 bg-light"><b>Total {{ users|length }} users</b></li>
-              <div class="d-none d-md-block">
+              <li class="list-group-item p-2 bg-light"><b id='total_users'>Total {{ users|length }} users</b></li>
+              <div class="d-none d-md-block" id='list_users'>
                 {% for user in users %}
                   <li class="list-group-item p-0 m-0  bg-light">
                     {{ user }}

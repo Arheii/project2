@@ -1,13 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const room = document.querySelector("#room").innerHTML;
+
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
     socket.on('connect', () => {
+        // connect user to this room when page is loaded
+        socket.emit('join', {'room': room});
+
+        // send new message by press button
         document.querySelector('#send_msg').onsubmit = () => {
                 const text_msg = document.querySelector("#text_msg").value;
-                const room = document.querySelector("#room").innerHTML;
-
                 socket.emit('send_msg', {'text_msg': text_msg, 'room': room});
-                socket.emit('INFO');
 
 
                 // Create new item for list
@@ -26,11 +30,29 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
-    // When a new message is received, add to the chat
+    // When a new message is received, add it to the chat
     socket.on('new_row', data => {
         const p = document.createElement('p');
         p.innerHTML = data.row;
         document.querySelector("#chat").append(p);
+    });
+
+    // join new user
+    socket.on('new_user', data => {
+        // const li = document.createElement('li');
+        // li.className = "list-group-item p-0 m-0  bg-light";
+        // li.innerHTML = data.user;
+
+        // document.querySelector("#list_users").append(li);
+        document.querySelector("#list_users").innerHTML = ''
+        for (const i in data.users) {
+            const li = document.createElement('li');
+            li.className = "list-group-item p-0 m-0  bg-light";
+            li.innerHTML = data.users[i];
+
+            document.querySelector("#list_users").append(li);
+        }
+
     });
 
     // By default, submit button is disabled
