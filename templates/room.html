@@ -14,7 +14,7 @@
       <div class="col-lg-10 col-md-11 col-sm-12- border m-1">
 
         <div class="row justify-content-md  bg-info">
-          <h5 class="text-center">It's {{ room }} </h5>
+          <h5 class="text-center" id='ttl'>It's <span id='room'>{{ room }}</span> </h5>
           <button type="button" class="close" aria-label="Close">
             <span  aria-hidden="true">&times;</span>
           </button>
@@ -23,53 +23,53 @@
         <div class="row align-items">
 
           <!--main chat-->
-          <div class="col-12 col-md-10 border p-2"  style="min-height: 30rem;">
-            <p>firt</p>
-            <p>second</p>
-            <ul class="list-group">
-              <!--<li class="list-group-item p-2 bg-light"><b>Total {{ users|length }} users</b></li>-->
+          <div class="col-12 col-md-10 border p-2"  style="min-height: 20rem; max-height: 20rem; overflow-y: auto;">
+            <div id="chat">
               {% for msg in msgs %}
-                <!--<button type="button" class="list-group-item list-group-item-action">-->
-                <!--  {{ user }}-->
-                <!--</button>-->
-                <li class="list-group-item p-0 m-0">
-                  {{ msg }}
-                </li>
+                <p>
+                  {{ msg[0] }}
+                  {{ msg[1] }}:
+                  {{ msg[2] }}
+                </p>
               {% endfor %}
-            </ul>
+            </div>
           </div>
 
           <!--user list-->
-          <div class="col-12 col-md-2 border bg-light  text-truncate">
+          <div class="col-0 col-md-2 border bg-light  text-truncate d-lg-block">
             <ul class="list-group list-group-flush ">
               <li class="list-group-item p-2 bg-light"><b>Total {{ users|length }} users</b></li>
-              {% for user in users %}
-                <!--<button type="button" class="list-group-item list-group-item-action">-->
-                <!--  {{ user }}-->
-                <!--</button>-->
-                <li class="list-group-item p-0 m-0  bg-light">
-                  {{ user }}
-                </li>
-              {% endfor %}
+              <div class="d-none d-md-block">
+                {% for user in users %}
+                  <li class="list-group-item p-0 m-0  bg-light">
+                    {{ user }}
+                  </li>
+                {% endfor %}
+              </div>
             </ul>
           </div>
 
         </div>
 
         <div class="row">
-          <div class="input-group mt-1">
+          <form class="form-inline w-100"  id="send_msg">
+            <!--<div class="input-group mt-1">-->
+            <div class="input-group w-100">
               <div class="input-group-prepend">
                 <select class="custom-select" id="inputGroupSelect01">
                   <option selected value="All">All</option>
                   <option value="alfa">alfa</option>
                 </select>
               </div>
+              <input type="text"  class="form-control" placeholder="mesage" id="text_msg">
 
-            <input type="text"  class="form-control" placeholder="mesage" id="text_msg">
-            <div class="input-group-append">
-              <button class="btn btn-outline bg-info" type="button" id="send_msg">Send message</button>
+
+              <!--<div class="input-group-append">-->
+                <button class="btn btn-outline bg-info" type="submit" id='sbm'>Send message</button>
+              <!--</div>-->
+            <!--</div>-->
             </div>
-          </div>
+          </form>
         </div>
 
       </div>

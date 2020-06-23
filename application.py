@@ -1,5 +1,6 @@
 import os
 from functools import wraps
+from datetime import datetime
 
 from flask import Flask, session, render_template, request, redirect
 from flask_socketio import SocketIO, emit
@@ -8,7 +9,7 @@ from flask_session import Session
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-socketio = SocketIO(app)
+
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -17,9 +18,13 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+socketio = SocketIO(app)
+socketio.init_app(app, cors_allowed_origins="*")
 
-channels = {"18+": [['huy', 'dva'], ['hello everything', 'second test message']]}
+
+channels = {"main": [['Alfa', 'Betta'], [['13:18:08', 'Alfa', 'I always be first. Muhahaha'], ['13:18:10', 'Betta', 'ok, dude']]]}
 users = set()
+
 
 def login_required(f):
     @wraps(f)
@@ -39,13 +44,16 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     # Forget any user id
+    users.discard(session.get('username', ''))
     session.clear()
 
     if request.method == "POST":
-        username = request.form.get('username')
-        if username:
+        username = request.form.get('username').split()[0]
+        if username and username not in users:
             session['username'] = username
             return redirect('/')
+        else:
+            return render_template("login.html", message="nickname is empty or busy")
 
     return render_template("login.html", message="")
 
@@ -57,3 +65,18 @@ def rooms(room):
         return redirect('/')
     users, msgs = channels[room]
     return render_template("room.html", room=room, users=users, msgs = msgs[-100:])
+
+
+@socketio.on("send_msg")
+def send_msg(data):
+    room = data['room']
+    text_msg =  data['text_msg']
+    user = session.get("username", 'ohh, fucking_cheater!')
+    date = datetime.now().strftime('%H:%M:%S')
+    channels[room][1].append([date, user, text_msg])
+
+    s = f'{date} {user} {text_msg}'
+    print('Received msg', s)
+    # print(request.sid. request)
+    # emit("vote totals", votes, broadcast=True)
+
