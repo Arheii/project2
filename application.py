@@ -58,7 +58,17 @@ def login():
     return render_template("login.html", message="")
 
 
-@app.route("/rooms/<string:room>", methods=["GET"])
+@app.route("/create_room", methods=["POST"])
+@login_required
+def create_room():
+    room = request.form.get('new_room').split()[0]
+    if room and room not in channels:
+        channels[room] = [[],[]]
+        # return redirect(f'/{room}')
+    return redirect('/')
+
+
+@app.route("/rooms/<string:room>", methods=["GET", "POST"])
 @login_required
 def rooms(room):
     if room not in channels:
@@ -73,10 +83,12 @@ def send_msg(data):
     text_msg =  data['text_msg']
     user = session.get("username", 'ohh, fucking_cheater!')
     date = datetime.now().strftime('%H:%M:%S')
-    channels[room][1].append([date, user, text_msg])
+    row = (date, user, text_msg)
+    channels[room][1].append(row)
+    emit("new_row", {'row': row}, broadcast=True)
 
     s = f'{date} {user} {text_msg}'
     print('Received msg', s)
-    # print(request.sid. request)
-    # emit("vote totals", votes, broadcast=True)
+
+
 

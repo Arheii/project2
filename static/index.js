@@ -26,6 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
+    // When a new message is received, add to the chat
+    socket.on('new_row', data => {
+        const p = document.createElement('p');
+        p.innerHTML = data.row;
+        document.querySelector("#chat").append(p);
+    });
+
     // By default, submit button is disabled
     document.querySelector('#sbm').disabled = true;
 
