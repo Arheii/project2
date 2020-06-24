@@ -116,8 +116,12 @@ function update_users(data) {
 
 function scroll_to_bot() {
     // scroll chat-windows to last message
-    var objDiv = document.getElementById("chat");
+    var objDiv = document.getElementById("main_window");
     objDiv.scrollTop = objDiv.scrollHeight;
 }
 
 
+function scrollToBottom(id){
+   var div = document.getElementById(id);
+   div.scrollTop = div.scrollHeight - div.clientHeight;
+}
