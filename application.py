@@ -31,7 +31,9 @@ users = set()
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get('username', None) is None:
+        username = session.get('username', None)
+        if username is None or username not in users:
+        # if username is None:
             return redirect('/login')
         return f(*args, **kwargs)
     return decorated_function
@@ -75,15 +77,16 @@ def create_room():
 def rooms(room):
     if room not in channels:
         return redirect('/')
-    users, msgs = channels[room]
-    return render_template("room.html", room=room, users=users, msgs = msgs)
+    msgs = channels[room][1]
+    return render_template("room.html", room=room,  msgs = msgs)
 
 
 @socketio.on("send_msg")
+@login_required
 def send_msg(data):
     # prepare new message
     room = data['room']
-    text_msg =  data['text_msg']
+    text_msg =  data['text_msg'][-255:]
     user = session.get("username", 'ohh, fucking_cheater!')
     date = datetime.now().strftime('%H:%M:%S')
     row = (date, user, text_msg)
@@ -106,21 +109,34 @@ def on_join(data):
     """Update users list in room"""
     user = session.get("username", 'ohh, fucking_cheater!')
     room = data['room']
+    t = datetime.now().strftime('%H:%M:%S')
 
     # add to socket.io room for broadcast messages
     join_room(room)
 
-    # add to local store
+    # add user to local room store
     channels[room][0].add(user)
     users = sorted(channels[room][0])
 
+    # update userslist for other users
+    emit("new_user", {'users': users, 'user': user, 'time': t}, room=room)
     print(f'{user} connect to', room, users)
-    emit("new_user", {'users': users}, room=room)
 
 
 @socketio.on('leave')
 def on_leave(data):
-    username = data['username']
+    print('Try to leave ...')
+    user = session.get("username", 'ohh, fucking_cheater!')
     room = data['room']
+    t = datetime.now().strftime('%H:%M:%S')
+
+    # leave socket.io 'room'
     leave_room(room)
-    emit(username + ' has left the room.', room=room)
+
+    # delete user from local room store
+    channels[room][0].discard(user)
+    users = sorted(channels[room][0])
+
+    # update userslist for other users
+    emit("leave_user", {'users': users, 'user': user, 'time': t}, room=room)
+    print(f'{user} leave from', room, users)
