@@ -48,7 +48,7 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # Forget any user id
+    # Forget any user info
     users.discard(session.get('username', ''))
     session.clear()
 
@@ -79,7 +79,7 @@ def rooms(room):
     if room not in channels:
         return redirect('/')
     msgs = channels[room][1]
-    return render_template("room.html", room=room,  msgs = msgs)
+    return render_template("room.html", room=room,  msgs=msgs)
 
 
 @socketio.on("send_msg")
@@ -100,12 +100,6 @@ def send_msg(data):
 
         # send message all users in this room
         emit("new_row", {'row': row, 'pm': ''}, room=room)
-
-        s = f'{date} {user} {text_msg}'
-        print('Received msg', s)
-        print('namespase', f'/{room}')
-        print(channels)
-        print(request.sid)
 
     # For PM
     else:
@@ -132,9 +126,8 @@ def on_join(data):
     channels[room][0][user] = request.sid
     users = sorted(channels[room][0])
 
-    # update userslist for other users
+    # system messsage. and updating  userslist for all users
     emit("new_user", {'users': users, 'user': user, 'time': t}, room=room)
-    print(f'{user} connect to', room, users)
 
 
 @socketio.on('leave')
@@ -151,6 +144,5 @@ def on_leave(data):
     channels[room][0].pop(user, '')
     users = sorted(channels[room][0])
 
-    # update userslist for other users
+    # system messsage and updating userslist for all users
     emit("leave_user", {'users': users, 'user': user, 'time': t}, room=room)
-    print(f'{user} leave from', room, users)

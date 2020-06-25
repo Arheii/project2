@@ -30,12 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Create new row for chat
         const row = document.createElement('div');
 
+        // time message
         const time = document.createElement('span');
         time.className = "row_time";
         time.innerHTML = data.row[0];
         row.append(time);
 
-        // If PM
+        // If personal message
         if (data.pm) {
             const from_u = document.createElement('span');
             from_u.className = "from_to";
@@ -57,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             user_to.innerHTML = ` ${data.pm}: `;
             row.append(user_to);
         }
+        // broadcast message
         else {
             const user = document.createElement('span');
             user.className = "row_user";
@@ -64,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             row.append(user);
         }
 
+        // main text message
         row.append(data.row[2]);
 
         // add row to chat
@@ -100,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // By default, submit button is disabled
     document.querySelector('#sbm').disabled = true;
-
     // Enable button only if there is text in the input field
     document.querySelector('#text_msg').onkeyup = () => {
         if (document.querySelector('#text_msg').value.length > 0)
@@ -113,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close button (leave room)
     document.querySelector('#close_room').onclick = () => {
         // not work in Firefox without timeout
-        setTimeout(() => { socket.emit('leave', {'room': room}); }, 20);
+        setTimeout(() => { socket.emit('leave', {'room': room}); }, 50);
         localStorage.setItem('room', '');
         window.location.href = "/";
     };
@@ -122,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logout link
     document.querySelector('#logout').onclick = () => {
         // not work in Firefox without timeout
-        setTimeout(() => { socket.emit('leave', {'room': room}); }, 20);
+        setTimeout(() => { socket.emit('leave', {'room': room}); }, 50);
         localStorage.setItem('room', '');
     };
 
