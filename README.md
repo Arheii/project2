@@ -17,3 +17,6 @@ Web Programming with Python, FLask and JavaScript
 - **index.html** - main page, when you can create new room or enter in exist.
 - **login.html** - page for Log in.
 - **room.html** - page for all chats(room). contain the main chat window.
+
+---
+**Personal Touch:** - supporting private messaging between two users.
