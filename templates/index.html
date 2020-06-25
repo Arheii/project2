@@ -6,9 +6,18 @@
 
 {% block static %}
   <script>
-    // Redirect to chat room if user return
-    if (localStorage.getItem('room'))
-      window.location.href = `/rooms/${(localStorage.getItem('room'))}`;
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // Redirect to chat room if user return
+      if (localStorage.getItem('room')) {
+        window.location.href = `/rooms/${(localStorage.getItem('room'))}`;
+      }
+
+      // for autofocus in modal window 'add room'
+      $(document).on('show.bs.modal','#modal', function () {
+        setTimeout(() => { document.querySelector("#new_room").focus(); }, 500);
+      });
+    });
   </script>
 {% endblock %}
 
@@ -48,7 +57,7 @@
               </div>
               <form action="/create_room" method='post'>
                 <div class="modal-body">
-                  <input autocomplete="off" class="form-control" name="new_room" placeholder="room" required type='text'>
+                  <input autocomplete="off" class="form-control" id='new_room' name="new_room" placeholder="room" required type='text'>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

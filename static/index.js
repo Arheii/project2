@@ -40,8 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.pm) {
             const from_u = document.createElement('span');
             from_u.className = "from_to";
-            from_u.innerHTML = ' from '
-            row.append(from_u)
+            from_u.innerHTML = ' from ';
+            row.append(from_u);
 
             const user = document.createElement('span');
             user.className = "row_user";
@@ -50,8 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const to_u = document.createElement('span');
             to_u.className = "from_to";
-            to_u.innerHTML = 'to '
-            row.append(to_u)
+            to_u.innerHTML = 'to ';
+            row.append(to_u);
 
             const user_to = document.createElement('span');
             user_to.className = "row_user";
