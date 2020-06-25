@@ -10,7 +10,7 @@ Web Programming with Python, FLask and JavaScript
 
 ##### /static/ #####
 - **styles.css** - css file for all .html.
-- **index.js** - all javascript
+- **index.js** - javascripts for room pages
 
 ##### /templates/ #####
 - **layout.html** - template, include login info.
