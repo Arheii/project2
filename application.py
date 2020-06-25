@@ -24,16 +24,17 @@ socketio = SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 # Store all room chats, with users and 100 messages
-channels = {"main": [{'Alfa', 'Betta'}, [['13:18:08', 'Alfa', 'I always be first. Muhahaha'], ['13:18:10', 'Betta', 'ok, dude...']]]}
+channels = {}
 users = set()
 
 
+
 def login_required(f):
+    """ redirect to login page if user not log in"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         username = session.get('username', None)
         if username is None or username not in users:
-        # if username is None:
             return redirect('/login')
         return f(*args, **kwargs)
     return decorated_function
@@ -68,7 +69,7 @@ def login():
 def create_room():
     room = request.form.get('new_room').split()[0]
     if room and room not in channels:
-        channels[room] = [[],[]]
+        channels[room] = [{},[]]
     return redirect('/')
 
 
@@ -84,24 +85,37 @@ def rooms(room):
 @socketio.on("send_msg")
 @login_required
 def send_msg(data):
-    # prepare new message
+    """send new message to room or user"""
     room = data['room']
     text_msg =  data['text_msg'][-255:]
     user = session.get("username", 'ohh, fucking_cheater!')
     date = datetime.now().strftime('%H:%M:%S')
     row = (date, user, text_msg)
 
-    # Add new message to room chat. and split to last 100
-    channels[room][1].append(row)
-    channels[room][1] = channels[room][1][-100:]
+    # Broadcast message
+    if data['for_user'] == '__All__':
+        # Add new message to room chat. and split to last 100
+        channels[room][1].append(row)
+        channels[room][1] = channels[room][1][-100:]
 
-    # send message all users in this room
-    emit("new_row", {'row': row, 'room': room}, room=room)
+        # send message all users in this room
+        emit("new_row", {'row': row, 'pm': ''}, room=room)
 
-    s = f'{date} {user} {text_msg}'
-    print('Received msg', s)
-    print('namespase', f'/{room}')
-    print(channels)
+        s = f'{date} {user} {text_msg}'
+        print('Received msg', s)
+        print('namespase', f'/{room}')
+        print(channels)
+        print(request.sid)
+
+    # For PM
+    else:
+        for_user = data['for_user']
+        sid = channels[room][0].get(for_user, '')
+        if sid:
+            # to yourself
+            emit("new_row", {'row': row, 'pm': for_user})
+            # to opponent
+            emit("new_row", {'row': row, 'pm': for_user}, room=sid)
 
 
 @socketio.on('join')
@@ -115,7 +129,7 @@ def on_join(data):
     join_room(room)
 
     # add user to local room store
-    channels[room][0].add(user)
+    channels[room][0][user] = request.sid
     users = sorted(channels[room][0])
 
     # update userslist for other users
@@ -134,7 +148,7 @@ def on_leave(data):
     leave_room(room)
 
     # delete user from local room store
-    channels[room][0].discard(user)
+    channels[room][0].pop(user, '')
     users = sorted(channels[room][0])
 
     # update userslist for other users
